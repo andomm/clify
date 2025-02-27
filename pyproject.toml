@@ -1,0 +1,29 @@
+[project]
+name = "spotcli"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Antton Anttila", email = "antton.anttila01@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "click>=8.1.8",
+    "oauth2-cli-auth>=1.5.0",
+    "python-dotenv>=1.0.1",
+    "requests>=2.32.3",
+    "textual>=2.1.1",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["app*"]
+exclude = []
+namespaces = false  # i.e. packages must have '__init__.py'
+
+[project.scripts]
+spotcli = "spotcli.cli.root:group"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

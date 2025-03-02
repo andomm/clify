@@ -10,7 +10,7 @@ import spotcli.cli.spotify
 
 class SpotcliApp(App):
     def on_mount(self) -> None:
-        self.title = "Spotcli"
+        self.title = "clify"
         self.screen.styles.background = "#1ED760"
         self.screen.styles.border = ("heavy", "white")
         self.screen.styles.align_horizontal = "center"

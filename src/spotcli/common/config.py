@@ -20,7 +20,7 @@ class Config:
         return os.getenv("SPOTIFY_REDIRECT_URI", "")
 
     @property
-    def spotify_authoirzation_url(self) -> str:
+    def spotify_authorization_url(self) -> str:
         return "https://accounts.spotify.com/authorize"
 
     @property

@@ -57,3 +57,11 @@ class SpotifyClient:
         response = requests.post(self.token_url, headers=headers, data=data)
         response_data = response.json()
         self.access_token = response_data.get("access_token")
+
+    @staticmethod
+    def get_current_song(access_token: str) -> dict:
+        headers = {"Authorization": f"Bearer {access_token}"}
+        response = requests.get(
+            "https://api.spotify.com/v1/me/player/currently-playing", headers=headers
+        )
+        return response.json()["item"]["name"]

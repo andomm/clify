@@ -1,24 +1,32 @@
 import base64
+from dataclasses import dataclass
 
 import requests
 
 
+@dataclass()
 class SpotifyClient:
 
-    def __init__(self, client_id, client_secret, redirect_uri):
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.redirect_uri = redirect_uri
-        self.token_url = "https://accounts.spotify.com/api/token"
-        self.auth_url = "https://accounts.spotify.com/authorize"
-        self.access_token = None
-        self.refresh_token = None
+    client_id: str
+    client_secret: str
+    redirect_uri: str
+    token_url: str = "https://accounts.spotify.com/api/token"
+    auth_url: str = "https://accounts.spotify.com/authorize"
+    access_token: str = ""
+    refresh_token: str = ""
 
-    def get_authorization_url(self, scope):
-        auth_url = f"{self.auth_url}?client_id={self.client_id}&response_type=code&redirect_uri={self.redirect_uri}&scope={scope}"
-        return auth_url
+    def __enter__(self):
+        return self
 
-    def get_tokens(self, authorization_code):
+    def __exit__(
+        self,
+        exc_type,
+        exc_val,
+        exc_tb,
+    ):
+        pass
+
+    def get_tokens(self, authorization_code) -> tuple[str, str]:
         auth_header = base64.b64encode(
             f"{self.client_id}:{self.client_secret}".encode()
         ).decode()
@@ -33,11 +41,11 @@ class SpotifyClient:
         }
         response = requests.post(self.token_url, headers=headers, data=data)
         response_data = response.json()
-        self.access_token = response_data.get("access_token")
-        self.refresh_token = response_data.get("refresh_token")
-        return response_data
+        self.access_token = response_data.get("access_token", "")
+        self.refresh_token = response_data.get("refresh_token", "")
+        return self.access_token, self.refresh_token
 
-    def refresh_access_token(self):
+    def refresh_access_token(self) -> None:
         auth_header = base64.b64encode(
             f"{self.client_id}:{self.client_secret}".encode()
         ).decode()
@@ -49,4 +57,3 @@ class SpotifyClient:
         response = requests.post(self.token_url, headers=headers, data=data)
         response_data = response.json()
         self.access_token = response_data.get("access_token")
-        return response_data

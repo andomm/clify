@@ -1,11 +1,9 @@
-import webbrowser
-
 import click
 import dotenv
 from textual.app import App
 from textual.widgets import Button
 
-import spotcli.cli.spotify
+import clify.cli.spotify
 
 
 class SpotcliApp(App):
@@ -25,7 +23,7 @@ class SpotcliApp(App):
 
 @click.group(
     commands=[
-        spotcli.cli.spotify.group,
+        clify.cli.spotify.group,
     ],
 )
 @click.option(

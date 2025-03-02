@@ -1,10 +1,10 @@
 import click
 
-from spotcli.clients.auth import OAuthCallbackHttpServer
-from spotcli.clients.spotify_api import SpotifyClient
-from spotcli.common.config import config
-from spotcli.models import client_info
-from spotcli.models.client_info import OAuth2ClientInfo
+from clify.clients.auth import OAuthCallbackHttpServer
+from clify.clients.spotify_api import SpotifyClient
+from clify.common.config import config
+from clify.models import client_info
+from clify.models.client_info import OAuth2ClientInfo
 
 
 def authenticate() -> str:

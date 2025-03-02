@@ -1,11 +1,8 @@
-import base64
-import urllib.parse
-import urllib.request
 import webbrowser
 from dataclasses import dataclass
 from typing import Callable
 
-from spotcli.common.utils import load_json
+from clify.common.utils import load_json
 
 
 @dataclass()

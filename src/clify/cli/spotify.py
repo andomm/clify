@@ -1,7 +1,7 @@
 import click
 
-from spotcli.clients.spotify_api import SpotifyClient
-from spotcli.common import logic
+from clify.clients.spotify_api import SpotifyClient
+from clify.common import logic
 
 
 @click.group("spotify")

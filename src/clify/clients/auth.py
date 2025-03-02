@@ -10,6 +10,7 @@ class CallbackPageTemplate:
     """
     Holder for callback page assets and template
     """
+
     SUCCESS_SVG = """
     <svg xmlns="http://www.w3.org/2000/svg" width="154px" height="154px">
         <g fill="none" stroke="#22AE73" stroke-width="2">
@@ -148,7 +149,9 @@ class CallbackPageTemplate:
     )
     """Template for callback HTML page"""
 
-    def render(self, title: str, message: str, lang: str = "en", has_error: bool = False):
+    def render(
+        self, title: str, message: str, lang: str = "en", has_error: bool = False
+    ):
         """
         Render callback page
 
@@ -170,6 +173,7 @@ class OAuthRedirectHandler(BaseHTTPRequestHandler):
     """
     HTTPRequest Handler that is intended to be used as oauth2 callback page
     """
+
     _callback_template = CallbackPageTemplate()
     LANGUAGE = "en"
     """HTML language to render for callback page"""
@@ -188,10 +192,7 @@ class OAuthRedirectHandler(BaseHTTPRequestHandler):
 
     def _serve_callback_page(self, title: str, message: str, has_error: bool):
         rendered_callback_page = self._callback_template.render(
-            lang=self.LANGUAGE,
-            title=title,
-            message=message,
-            has_error=has_error
+            lang=self.LANGUAGE, title=title, message=message, has_error=has_error
         )
         self._serve_html(rendered_callback_page)
 
@@ -202,9 +203,11 @@ class OAuthRedirectHandler(BaseHTTPRequestHandler):
         """
         params = parse_qs(urlparse(self.path).query)
 
-        has_error = ("code" not in params
-                     or len(params['code']) != 1
-                     or params['code'][0].strip() == "")
+        has_error = (
+            "code" not in params
+            or len(params["code"]) != 1
+            or params["code"][0].strip() == ""
+        )
 
         if has_error:
             self.send_response(400)
@@ -261,10 +264,12 @@ class OAuthCallbackHttpServer(HTTPServer):
         """
         for _ in range(0, attempts):
             try:
-                _method_with_timeout(self.handle_request, timeout_seconds=timeout_per_attempt)
+                _method_with_timeout(
+                    self.handle_request, timeout_seconds=timeout_per_attempt
+                )
             except TimeoutException:
                 continue
             if self.get_code() is not None:
                 return self.get_code()
 
-        return None       return None
+        return None

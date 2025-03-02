@@ -1,5 +1,5 @@
 [project]
-name = "spotcli"
+name = "clify"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -22,7 +22,7 @@ exclude = []
 namespaces = false  # i.e. packages must have '__init__.py'
 
 [project.scripts]
-spotcli = "spotcli.cli.root:group"
+clify = "clify.cli.root:group"
 
 [build-system]
 requires = ["hatchling"]

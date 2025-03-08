@@ -3,6 +3,21 @@ from dataclasses import dataclass
 
 import requests
 
+from clify.clients import auth
+
+
+@dataclass()
+class Song:
+    name: str
+
+    @classmethod
+    def from_json(cls, json_data):
+        if json_data["item"] is None:
+            return cls(name="")
+        return cls(
+            name=json_data["item"]["name"],
+        )
+
 
 @dataclass()
 class SpotifyClient:
@@ -58,10 +73,16 @@ class SpotifyClient:
         response_data = response.json()
         self.access_token = response_data.get("access_token")
 
-    @staticmethod
-    def get_current_song(access_token: str) -> dict:
-        headers = {"Authorization": f"Bearer {access_token}"}
+    def get_current_song(self) -> Song | None:
+        headers = {"Authorization": f"Bearer {self.access_token}"}
         response = requests.get(
-            "https://api.spotify.com/v1/me/player/currently-playing", headers=headers
+            "https://api.spotify.com/v1/me/player/currently-playing",
+            headers=headers,
         )
-        return response.json()["item"]["name"]
+        if response.status_code == 401:
+            self.refresh_access_token()
+            headers = {"Authorization": f"Bearer {self.access_token}"}
+        if response.status_code != 200:
+            return None
+
+        return Song.from_json(response.json())

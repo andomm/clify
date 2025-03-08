@@ -2,6 +2,7 @@ import click
 
 from clify.clients.spotify_api import SpotifyClient
 from clify.common import logic
+from clify.common.config import config
 
 
 @click.group("spotify")
@@ -16,6 +17,10 @@ def authenticate():
 
 @group.command("current-song")
 def current_song():
-    token = logic.authenticate()
-    current_song = SpotifyClient.get_current_song(token)
-    click.echo(current_song)
+    with SpotifyClient(
+        config.spotify_client_id,
+        config.spotify_client_secret,
+        config.spotify_redirect_uri,
+    ) as client:
+        if current_song := client.get_current_song():
+            click.echo(current_song.name)

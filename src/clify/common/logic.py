@@ -45,3 +45,14 @@ def authenticate() -> str:
         click.echo(f"Failed to obtain token")
 
     return ""
+
+
+def get_current_song() -> str:
+    with SpotifyClient(
+        config.spotify_client_id,
+        config.spotify_client_secret,
+        config.spotify_redirect_uri,
+    ) as client:
+        if song := client.get_current_song():
+            return song.name
+        return "No song playing"

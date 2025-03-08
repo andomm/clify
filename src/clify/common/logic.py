@@ -35,8 +35,12 @@ def authenticate() -> str:
             config.spotify_client_secret,
             config.spotify_redirect_uri,
         ) as client:
-            access_token, _ = client.get_tokens(code)
-            return access_token
+            access_token, refresh_token = client.get_tokens(code)
+            with open("access_token.txt", "w") as f:
+                f.write(access_token)
+            with open("refresh_token.txt", "w") as f:
+                f.write(refresh_token)
+
     except ValueError:
         click.echo(f"Failed to obtain token")
 

@@ -273,3 +273,17 @@ class OAuthCallbackHttpServer(HTTPServer):
                 return self.get_code()
 
         return None
+
+
+def get_token_from_file(file_path: str) -> str:
+    """
+    Get token from file
+
+    :param file_path: Path to file
+    :return: Token from file
+    """
+    try:
+        with open(file_path, "r") as f:
+            return f.read()
+    except FileNotFoundError:
+        return ""

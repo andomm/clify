@@ -12,10 +12,10 @@ class SpotifyClient:
     redirect_uri: str
     token_url: str = "https://accounts.spotify.com/api/token"
     auth_url: str = "https://accounts.spotify.com/authorize"
-    access_token: str = ""
-    refresh_token: str = ""
 
     def __enter__(self):
+        self.access_token = auth.get_token_from_file("access_token.txt")
+        self.refresh_token = auth.get_token_from_file("refresh_token.txt")
         return self
 
     def __exit__(

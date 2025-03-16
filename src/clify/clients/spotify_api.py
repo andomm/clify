@@ -1,7 +1,9 @@
 import base64
 from dataclasses import dataclass
+from typing import Optional
 
 import requests
+from dacite import from_dict
 
 from clify.clients import auth
 
@@ -10,13 +12,18 @@ from clify.clients import auth
 class Song:
     name: str
 
-    @classmethod
-    def from_json(cls, json_data):
-        if json_data["item"] is None:
-            return cls(name="")
-        return cls(
-            name=json_data["item"]["name"],
-        )
+
+@dataclass()
+class Track:
+    name: str
+    id: str
+
+
+@dataclass()
+class Playlist:
+    name: str
+    id: str
+    description: Optional[str]
 
 
 @dataclass()
@@ -31,6 +38,10 @@ class SpotifyClient:
     def __enter__(self):
         self.access_token = auth.get_token_from_file("access_token.txt")
         self.refresh_token = auth.get_token_from_file("refresh_token.txt")
+        self.headers = {
+            "Authorization": f"Bearer {self.access_token}",
+            "Content-Type": "application/x-www-form-urlencoded",
+        }
         return self
 
     def __exit__(
@@ -74,15 +85,43 @@ class SpotifyClient:
         self.access_token = response_data.get("access_token")
 
     def get_current_song(self) -> Song | None:
-        headers = {"Authorization": f"Bearer {self.access_token}"}
         response = requests.get(
             "https://api.spotify.com/v1/me/player/currently-playing",
-            headers=headers,
+            headers=self.headers,
         )
         if response.status_code == 401:
             self.refresh_access_token()
-            headers = {"Authorization": f"Bearer {self.access_token}"}
+            self.headers = {"Authorization": f"Bearer {self.access_token}"}
         if response.status_code != 200:
             return None
 
-        return Song.from_json(response.json())
+        return from_dict(Song, response.json())
+
+    def get_user_playlists(self):
+        response = requests.get(
+            "https://api.spotify.com/v1/me/playlists",
+            headers=self.headers,
+        )
+        if response.status_code == 401:
+            self.refresh_access_token()
+            self.headers = {"Authorization": f"Bearer {self.access_token}"}
+        if response.status_code != 200:
+            return None
+
+        return [from_dict(Playlist, item) for item in response.json().get("items", [])]
+
+    def get_playlist_items(self, playlist_id: str):
+        response = requests.get(
+            f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks",
+            headers=self.headers,
+        )
+        if response.status_code == 401:
+            self.refresh_access_token()
+            self.headers = {"Authorization": f"Bearer {self.access_token}"}
+        if response.status_code != 200:
+            return None
+
+        return [
+            from_dict(Track, item.get("track"))
+            for item in response.json().get("items", [])
+        ]

@@ -18,6 +18,10 @@ def authenticate() -> str:
             "user-read-email",
             "user-read-playback-state",
             "user-modify-playback-state",
+            "playlist-read-private",
+            "playlist-modify-public",
+            "playlist-modify-private",
+            "playlist-read-collaborative",
         ],
     )
     click.echo("Opening browser for authentication")
